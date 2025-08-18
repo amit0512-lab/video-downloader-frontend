@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All-In-One Video Downloader</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>All-In-One Video Downloader</h1>
+            <p>Paste a link from YouTube, Shorts, Instagram Reels, or TikTok to start.</p>
+        </header>
+
+        <main>
+            <form id="download-form">
+                <input type="text" id="video-url" name="video-url" placeholder="Paste video link here..." required>
+                <button type="submit" id="download-btn">Download</button>
+            </form>
+            
+            <div id="message-area">
+                <!-- Messages like errors or loading status will appear here -->
+            </div>
+        </main>
+
+        <footer>
+            <p><strong>Disclaimer:</strong> This tool is for personal use only. Please respect the intellectual property rights of others. Users are solely responsible for downloading content in compliance with the respective platform's terms of service and copyright laws. Do not download content for which you do not have permission from the copyright owner.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
