@@ -4,16 +4,9 @@ const videoUrlInput = document.getElementById('video-url');
 const downloadBtn = document.getElementById('download-btn');
 const messageArea = document.getElementById('message-area');
 
-// --- Monetag Ad Integration (Conceptual) ---
-function triggerMonetagAd() {
-    console.log("Monetag ad would be triggered here.");
-    // Example: monetag.triggerAd(); 
-}
-
 // Listen for the form submission event
 downloadForm.addEventListener('submit', handleFormSubmit);
 
-// --- UPDATED FUNCTION ---
 async function handleFormSubmit(event) {
     event.preventDefault(); // Prevent the form from reloading the page
     
@@ -38,8 +31,8 @@ async function handleFormSubmit(event) {
     messageArea.style.display = 'block';
 
     try {
-        // Step 1: Fetch the video INFORMATION from our new '/download-info' endpoint
-        const response = await fetch('http://localhost:3000/download-info', {
+        // Step 1: Fetch the video INFORMATION from our LIVE '/download-info' endpoint on Render
+        const response = await fetch('https://video-downloader-service-4h5u.onrender.com/download-info', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -53,11 +46,9 @@ async function handleFormSubmit(event) {
             // SUCCESS: Backend returned the video details
             showMessage('Success! Your download will begin now.', 'success');
             
-            triggerMonetagAd();
-
-            // Step 2: Construct the URL for our NEW proxy endpoint.
+            // Step 2: Construct the URL for our LIVE proxy endpoint on Render.
             // We must encode the components to ensure they are passed correctly.
-            const proxyUrl = `http://localhost:3000/proxy-download?title=${encodeURIComponent(data.title)}&url=${encodeURIComponent(data.downloadUrl)}`;
+            const proxyUrl = `https://video-downloader-service-4h5u.onrender.com/proxy-download?title=${encodeURIComponent(data.title)}&url=${encodeURIComponent(data.downloadUrl)}`;
             
             // Step 3: Trigger the download by navigating to the proxy URL.
             // The browser will download the file streamed from our server.
@@ -71,7 +62,7 @@ async function handleFormSubmit(event) {
     } catch (error) {
         // CATCH: Network error or server is down
         console.error('Fetch error:', error);
-        showMessage('Could not connect to the server. Please ensure it is running.', 'error');
+        showMessage('Could not connect to the server. Please try again in a moment.', 'error');
     } finally {
         // Add a delay before resetting the form to allow the download to start
         setTimeout(() => {
@@ -79,8 +70,6 @@ async function handleFormSubmit(event) {
         }, 2000);
     }
 }
-
-// The old startDownload function is no longer needed and has been removed.
 
 /**
  * Detects the video platform from a given URL using regular expressions.
