@@ -31,8 +31,11 @@ async function handleFormSubmit(event) {
     messageArea.style.display = 'block';
 
     try {
-        // Step 1: Fetch the video INFORMATION from our LIVE '/download-info' endpoint on Render
-        const response = await fetch('https://video-downloader-service-4h5u.onrender.com/download-info', {
+        // ======== LOCAL TESTING: send to local backend ========
+        // Make sure server is running on localhost:3000
+        console.log('→ Sending POST to /download-info with body:', { url: videoURL });
+
+        const response = await fetch('http://localhost:3000/download-info', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -40,23 +43,30 @@ async function handleFormSubmit(event) {
             body: JSON.stringify({ url: videoURL })
         });
 
-        const data = await response.json();
+        // log status and headers
+        console.log('← Response status:', response.status, response.statusText);
 
-        if (response.ok && data.success) {
+        const data = await response.json().catch(err => {
+            console.error('Failed to parse JSON from response:', err);
+            return null;
+        });
+
+        console.log('← Response body:', data);
+
+        if (response.ok && data && data.success) {
             // SUCCESS: Backend returned the video details
             showMessage('Success! Your download will begin now.', 'success');
             
-            // Step 2: Construct the URL for our LIVE proxy endpoint on Render.
-            // We must encode the components to ensure they are passed correctly.
-            const proxyUrl = `https://video-downloader-service-4h5u.onrender.com/proxy-download?title=${encodeURIComponent(data.title)}&url=${encodeURIComponent(data.downloadUrl)}`;
+            // ======== LOCAL TESTING: use local proxy-download ========
+            const proxyUrl = `http://localhost:3000/proxy-download?title=${encodeURIComponent(data.title)}&url=${encodeURIComponent(data.downloadUrl)}`;
             
-            // Step 3: Trigger the download by navigating to the proxy URL.
-            // The browser will download the file streamed from our server.
+            // Trigger the download by navigating to the proxy URL.
             window.location.href = proxyUrl;
             
         } else {
             // ERROR: Backend returned an error message
-            showMessage(data.error || 'An unknown error occurred on the server.', 'error');
+            const msg = (data && (data.error || data.details)) || 'An unknown error occurred on the server.';
+            showMessage(msg, 'error');
         }
 
     } catch (error) {
